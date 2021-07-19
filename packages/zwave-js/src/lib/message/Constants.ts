@@ -165,7 +165,7 @@ export enum FunctionType {
 
 	UNKNOWN_FUNC_LOCK_ROUTE_RESPONSE = 0x90, // ??
 	UNKNOWN_FUNC_SEND_DATA_ROUTE_DEMO = 0x91, // ??
-	UNKNOWN_FUNC_GET_PRIORITY_ROUTE = 0x92, // ??
+	GetPriorityRoute = 0x92, //  Get the route to a node with the highest priority
 	UNKNOWN_FUNC_SET_PRIORITY_ROUTE = 0x93, // ??
 	UNKNOWN_FUNC_SERIAL_API_TEST = 0x95, // ??
 	UNKNOWN_FUNC_UNKNOWN_0x98 = 0x98, // ??

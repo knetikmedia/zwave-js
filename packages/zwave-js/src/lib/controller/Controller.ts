@@ -88,6 +88,10 @@ import {
 	SetRFReceiveModeResponse,
 } from "../serialapi/misc/SetRFReceiveModeMessages";
 import {
+	GetPriorityRouteRequest,
+	GetPriorityRouteResponse,
+} from "../serialapi/network-management/GetPriorityRouteMessages";
+import {
 	ExtNVMReadLongBufferRequest,
 	ExtNVMReadLongBufferResponse,
 } from "../serialapi/nvm/ExtNVMReadLongBufferMessages";
@@ -2944,6 +2948,35 @@ ${associatedNodes.join(", ")}`,
 				direction: "inbound",
 			});
 			return resp.nodeIds;
+		} catch (e) {
+			this.driver.controllerLog.logNode(
+				nodeId,
+				`requesting the node neighbors failed: ${e.message}`,
+				"error",
+			);
+			throw e;
+		}
+	}
+
+	/**
+	 * Returns the highest priority route to node
+	 */
+	public async getNodePriorityRoute(nodeId: number): Promise<string> {
+		this.driver.controllerLog.logNode(nodeId, {
+			message: "requesting node priority route...",
+			direction: "outbound",
+		});
+
+		try {
+			const resp =
+				await this.driver.sendMessage<GetPriorityRouteResponse>(
+					new GetPriorityRouteRequest(this.driver, { nodeId }),
+				);
+			this.driver.controllerLog.logNode(nodeId, {
+				message: `node priority route received: ${resp.payload.toString()}`,
+				direction: "inbound",
+			});
+			return resp.payload.toString();
 		} catch (e) {
 			this.driver.controllerLog.logNode(
 				nodeId,

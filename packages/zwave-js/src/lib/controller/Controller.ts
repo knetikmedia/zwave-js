@@ -92,6 +92,10 @@ import {
 	GetPriorityRouteResponse,
 } from "../serialapi/network-management/GetPriorityRouteMessages";
 import {
+	SetPriorityRouteRequest,
+	SetPriorityRouteResponse,
+} from "../serialapi/network-management/SetPriorityRouteMessages";
+import {
 	ExtNVMReadLongBufferRequest,
 	ExtNVMReadLongBufferResponse,
 } from "../serialapi/nvm/ExtNVMReadLongBufferMessages";
@@ -2961,7 +2965,7 @@ ${associatedNodes.join(", ")}`,
 	/**
 	 * Returns the highest priority route to node
 	 */
-	public async getNodePriorityRoute(nodeId: number): Promise<string> {
+	public async getNodePriorityRoute(nodeId: number): Promise<number[]> {
 		this.driver.controllerLog.logNode(nodeId, {
 			message: "requesting node priority route...",
 			direction: "outbound",
@@ -2972,15 +2976,91 @@ ${associatedNodes.join(", ")}`,
 				await this.driver.sendMessage<GetPriorityRouteResponse>(
 					new GetPriorityRouteRequest(this.driver, { nodeId }),
 				);
+
 			this.driver.controllerLog.logNode(nodeId, {
-				message: `node priority route received: ${resp.payload.toString()}`,
+				message: `node priority route received: ${resp.repeatersString}`,
 				direction: "inbound",
 			});
-			return resp.payload.toString();
+
+			return resp.repeaters;
 		} catch (e) {
 			this.driver.controllerLog.logNode(
 				nodeId,
 				`requesting the node neighbors failed: ${e.message}`,
+				"error",
+			);
+			throw e;
+		}
+	}
+
+	/**
+	 * Sets the priority route on a node
+	 */
+	public async setNodePriorityRoute(
+		nodeId: number,
+		repeaters: number[],
+		routeSpeed: number,
+	): Promise<boolean> {
+		this.driver.controllerLog.logNode(nodeId, {
+			message: "setting node priority route...",
+			direction: "outbound",
+		});
+
+		try {
+			const resp =
+				await this.driver.sendMessage<SetPriorityRouteResponse>(
+					new SetPriorityRouteRequest(this.driver, {
+						nodeId,
+						repeaters,
+						routeSpeed,
+					}),
+				);
+
+			this.driver.controllerLog.logNode(nodeId, {
+				message: `node priority route set: ${resp.retVal}`,
+				direction: "inbound",
+			});
+
+			return resp.retVal;
+		} catch (e) {
+			this.driver.controllerLog.logNode(
+				nodeId,
+				`setting the node priority route failed: ${e.message}`,
+				"error",
+			);
+			throw e;
+		}
+	}
+
+	/**
+	 * Remove the priority route from a node
+	 */
+	public async removeNodePriorityRoute(nodeId: number): Promise<boolean> {
+		this.driver.controllerLog.logNode(nodeId, {
+			message: "removing node priority route...",
+			direction: "outbound",
+		});
+
+		try {
+			const resp =
+				await this.driver.sendMessage<SetPriorityRouteResponse>(
+					new SetPriorityRouteRequest(this.driver, {
+						nodeId,
+						repeaters: [],
+						routeSpeed: 0,
+					}),
+				);
+
+			this.driver.controllerLog.logNode(nodeId, {
+				message: `node priority route removed: ${resp.retVal}`,
+				direction: "inbound",
+			});
+
+			return resp.retVal;
+		} catch (e) {
+			this.driver.controllerLog.logNode(
+				nodeId,
+				`removing the node priority route failed: ${e.message}`,
 				"error",
 			);
 			throw e;

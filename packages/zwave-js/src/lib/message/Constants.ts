@@ -166,7 +166,7 @@ export enum FunctionType {
 	UNKNOWN_FUNC_LOCK_ROUTE_RESPONSE = 0x90, // ??
 	UNKNOWN_FUNC_SEND_DATA_ROUTE_DEMO = 0x91, // ??
 	GetPriorityRoute = 0x92, //  Get the route to a node with the highest priority
-	UNKNOWN_FUNC_SET_PRIORITY_ROUTE = 0x93, // ??
+	SetPriorityRoute = 0x93, // Set the highest priority route on a node
 	UNKNOWN_FUNC_SERIAL_API_TEST = 0x95, // ??
 	UNKNOWN_FUNC_UNKNOWN_0x98 = 0x98, // ??
 
@@ -208,4 +208,17 @@ export enum FunctionType {
 	UNKNOWN_FUNC_ZMEBootloaderFlash = 0xf4,
 	UNKNOWN_FUNC_ZMECapabilities = 0xf5,
 	UNKNOWN_FUNC_ZMESerialAPIOptions = 0xf8,
+}
+
+export enum RouteTypes {
+	ZW_PRIORITY_ROUTE_APP_PR = 16,
+	ZW_PRIORITY_ROUTE_ZW_LWR = 1,
+	ZW_PRIORITY_ROUTE_ZW_NLWR = 2,
+	FALSE = 0,
+}
+
+export enum RouteSpeeds {
+	ZW_PRIORITY_ROUTE_SPEED_9600 = 1,
+	ZW_PRIORITY_ROUTE_SPEED_40K = 2,
+	ZW_PRIORITY_ROUTE_SPEED_100K = 3,
 }

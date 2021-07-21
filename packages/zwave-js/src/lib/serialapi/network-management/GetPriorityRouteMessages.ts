@@ -4,6 +4,8 @@ import {
 	FunctionType,
 	MessagePriority,
 	MessageType,
+	RouteSpeeds,
+	RouteTypes,
 } from "../../message/Constants";
 import {
 	expectedResponse,
@@ -44,13 +46,42 @@ export class GetPriorityRouteResponse extends Message {
 	public constructor(driver: Driver, options: MessageDeserializationOptions) {
 		super(driver, options);
 
-		console.log(this.payload);
+		if (this.payload.length !== 7) return;
+
+		const data = [...this.payload];
+
+		this._retVal = data[1];
+		this._repeaters = data.slice(2, 6);
+		this._routeSpeed = data[6];
+	}
+
+	private _repeaters: number[] = [];
+	public get repeaters(): number[] {
+		return this._repeaters;
+	}
+
+	public get repeatersString(): string {
+		return this._repeaters.join(",");
+	}
+
+	private _routeSpeed: number = 0;
+	public get routeSpeed(): string {
+		return RouteSpeeds[this._routeSpeed];
+	}
+
+	private _retVal: number = 0;
+	public get retVal(): string {
+		return RouteTypes[this._retVal];
 	}
 
 	public toLogEntry(): MessageOrCCLogEntry {
 		return {
 			...super.toLogEntry(),
-			message: { "priority route": this.payload.toString() },
+			message: {
+				"ret val": this.retVal,
+				"priority route": this.repeaters.join(","),
+				"route speed": this.routeSpeed,
+			},
 		};
 	}
 }
